@@ -55,7 +55,7 @@ class VideoWriter:
 class ImageSequenceReader(Dataset):
     def __init__(self, path, transform=None):
         self.path = path
-        self.files = sorted(os.listdir(path))
+        self.files = list([p for p in sorted(os.listdir(path)) if os.path.splitext(p)[1].endswith("png")])
         self.transform = transform
         
     def __len__(self):
@@ -70,7 +70,7 @@ class ImageSequenceReader(Dataset):
 
 
 class ImageSequenceWriter:
-    def __init__(self, path, extension='jpg'):
+    def __init__(self, path, extension='png'):
         self.path = path
         self.extension = extension
         self.counter = 0
@@ -80,7 +80,7 @@ class ImageSequenceWriter:
         # frames: [T, C, H, W]
         for t in range(frames.shape[0]):
             to_pil_image(frames[t]).save(os.path.join(
-                self.path, str(self.counter).zfill(4) + '.' + self.extension))
+                self.path, "frame" + str(self.counter).zfill(4) + '.' + self.extension))
             self.counter += 1
             
     def close(self):

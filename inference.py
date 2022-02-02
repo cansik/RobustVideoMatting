@@ -111,8 +111,8 @@ def convert_video(model,
         dtype = param.dtype
         device = param.device
     
-    if (output_composition is not None) and (output_type == 'video'):
-        bgr = torch.tensor([120, 255, 155], device=device, dtype=dtype).div(255).view(1, 1, 3, 1, 1)
+    if output_composition is not None:
+        bgr = torch.tensor([255, 255, 255], device=device, dtype=dtype).div(255).view(1, 1, 3, 1, 1)
     
     try:
         with torch.no_grad():
@@ -134,8 +134,9 @@ def convert_video(model,
                     if output_type == 'video':
                         com = fgr * pha + bgr * (1 - pha)
                     else:
-                        fgr = fgr * pha.gt(0)
-                        com = torch.cat([fgr, pha], dim=-3)
+                        # fgr = fgr * pha.gt(0)
+                        # com = torch.cat([fgr, pha], dim=-3)
+                        com = fgr * pha + bgr * (1 - pha)
                     writer_com.write(com[0])
                 
                 bar.update(src.size(1))
